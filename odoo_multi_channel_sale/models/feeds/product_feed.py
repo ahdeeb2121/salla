@@ -124,7 +124,12 @@ class ProductFeed(models.Model):
                 if context.get('wk_qty_update', True) and variant.qty_available and eval(variant.qty_available) > 0:
                     res = self.wk_change_product_qty(
                         exists.product_name, variant.qty_available, location_id)
-                exists.product_name.write({'weight': variant.weight, 'default_code': variant.default_code, 'barcode': variant.barcode or False})
+                update_vals = {'weight': variant.weight}
+                if variant.default_code:
+                    update_vals['default_code'] = variant.default_code
+                if variant.barcode:
+                    update_vals['barcode'] = variant.barcode
+                exists.product_name.write(update_vals)
                 exists.write({'default_code': variant.default_code, 'barcode': variant.barcode})
         return message
 
